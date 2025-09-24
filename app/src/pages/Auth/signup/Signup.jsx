@@ -4,7 +4,7 @@ function Signup() {
   return (
     <div>
       <Container>
-        <Center>
+        <Center minH="100vh">
           <Card w="408px" borderRadius="1rem" p="6">
             signup
           </Card>
