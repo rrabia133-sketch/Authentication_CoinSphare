@@ -13,7 +13,7 @@ import {
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import { object, string, ref } from "yup";
+import { object, string } from "yup";
 
 const SigninValidation = object({
   email: string().email("email is invalid").required("email is required"),
@@ -44,7 +44,6 @@ function Signin() {
             >
               <Form>
                 <Stack mt="10" spacing="6">
-                  <Flex gap="4"></Flex>
                   <FormControl>
                     <FormLabel htmlFor="email">Email</FormLabel>
                     <Field
