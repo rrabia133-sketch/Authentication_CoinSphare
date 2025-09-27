@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import {
   Card,
   Container,
@@ -10,18 +11,14 @@ import {
   Checkbox,
   Input,
   Button,
+  useToast,
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { object, string, ref } from "yup";
 import { useMutation } from "@tanstack/react-query";
-import Axios from "../../../API/Axios";
-
-const signupUser = async (data) => {
-  const response = await Axios.post("/user/signup", data);
-  return response.data;
-};
-
+import { signupUser } from "../../../API/query/userQuery";
+import { useState } from "react";
 const signupValidation = object({
   name: string().required("name is required"),
   surname: string().required("surname is required"),
@@ -35,14 +32,28 @@ const signupValidation = object({
 });
 
 function Signup() {
-  const { mutate, isPending } = useMutation({
+  const [email, setemail] = useState();
+  const navigate = useNavigate();
+
+  const toast = useToast();
+  const { mutate, isLoading, error, isError } = useMutation({
     mutationKey: ["signup"],
     mutationFn: signupUser,
     onSuccess: (data) => {
-      console.log("Signup successful:", data);
+      if (email != "") {
+        navigate("/Register-Emial-Verify", {
+          state: { email },
+        });
+      }
     },
     onError: (error) => {
-      console.error("Signup failed:", error);
+      toast({
+        title: "Signin Failed",
+        description: error.message,
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      });
     },
   });
 
@@ -64,7 +75,13 @@ function Signup() {
                 repeatpassword: "",
               }}
               onSubmit={(values) => {
-                mutate(values);
+                setemail(values.email);
+                mutate({
+                  firstName: values.name,
+                  lastName: values.surname,
+                  email: values.email,
+                  password: values.password,
+                });
               }}
               validationSchema={signupValidation}
             >
@@ -78,7 +95,12 @@ function Signup() {
                         name="name"
                         placeholder="enter name..."
                       />
-                      <ErrorMessage name="name" component={Text} color="red.500" fontSize="sm" />
+                      <ErrorMessage
+                        name="name"
+                        component={Text}
+                        color="red.500"
+                        fontSize="sm"
+                      />
                     </FormControl>
                     <FormControl>
                       <FormLabel htmlFor="surname">SurName</FormLabel>
@@ -87,7 +109,12 @@ function Signup() {
                         name="surname"
                         placeholder="enter surname..."
                       />
-                      <ErrorMessage name="surname" component={Text} color="red.500" fontSize="sm" />
+                      <ErrorMessage
+                        name="surname"
+                        component={Text}
+                        color="red.500"
+                        fontSize="sm"
+                      />
                     </FormControl>
                   </Flex>
                   <FormControl>
@@ -97,7 +124,12 @@ function Signup() {
                       name="email"
                       placeholder="enter email..."
                     />
-                    <ErrorMessage name="email" component={Text} color="red.500" fontSize="sm" />
+                    <ErrorMessage
+                      name="email"
+                      component={Text}
+                      color="red.500"
+                      fontSize="sm"
+                    />
                   </FormControl>
                   <FormControl>
                     <FormLabel htmlFor="password">Password</FormLabel>
@@ -107,7 +139,12 @@ function Signup() {
                       type="password"
                       placeholder="enter password..."
                     />
-                    <ErrorMessage name="password" component={Text} color="red.500" fontSize="sm" />
+                    <ErrorMessage
+                      name="password"
+                      component={Text}
+                      color="red.500"
+                      fontSize="sm"
+                    />
                   </FormControl>
                   <FormControl>
                     <FormLabel htmlFor="repeatpassword">
@@ -119,14 +156,21 @@ function Signup() {
                       type="password"
                       placeholder="enter repeat password..."
                     />
-                    <ErrorMessage name="repeatpassword" component={Text} color="red.500" fontSize="sm" />
+                    <ErrorMessage
+                      name="repeatpassword"
+                      component={Text}
+                      color="red.500"
+                      fontSize="sm"
+                    />
                   </FormControl>
                   <Checkbox>
                     <Text textStyle="p3">
                       i agree with terms and Condition.
                     </Text>
                   </Checkbox>
-                  <Button isLoading={isPending} type="submit">Create Account</Button>
+                  <Button isLoading={isLoading} type="submit">
+                    Create Account
+                  </Button>
                   <Text>
                     Already have an Account?
                     <Link to="/signin">

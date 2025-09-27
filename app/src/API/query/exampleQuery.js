@@ -1,10 +1,10 @@
-import axios from "axios";
+import Axios from "../Axios";
 
 export const FetchExample = async () => {
   try {
     const { data } = Axios.get("/");
     return data;
   } catch (error) {
-    //console.log(error);
+    throw new Error(error.response.data.message);
   }
 };

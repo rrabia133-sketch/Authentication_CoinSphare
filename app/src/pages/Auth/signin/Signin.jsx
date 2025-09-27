@@ -10,7 +10,6 @@ import {
   Checkbox,
   Input,
   Button,
-  Box,
   useToast,
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
@@ -28,13 +27,29 @@ const SigninValidation = object({
 
 function Signin() {
   const toast = useToast();
-  const { mutate, isPending, error, isError } = useMutation({
+  const { mutate, isLoading, error, isError } = useMutation({
     mutationKey: ["signin"],
     mutationFn: signinUser,
+    onSuccess: (data) => {
+      toast({
+        title: "Signin Successfull",
+        description: "Welcome to Coin Sphare",
+        status: "success",
+        duration: 9000,
+        isClosable: true,
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Signin Failed",
+        description: error.message,
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      });
+    },
   });
-  if (isError) {
-    return <Box>{error.message}</Box>;
-  }
+
   return (
     <div>
       <Container>
@@ -96,7 +111,7 @@ function Signin() {
                     </Link>
                   </Flex>
 
-                  <Button isLoading={isPending} type="submit">
+                  <Button isLoading={isLoading} type="submit">
                     Login
                   </Button>
                   <Button variant="outline">
