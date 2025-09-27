@@ -14,6 +14,13 @@ import {
 import { Link } from "react-router-dom";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { object, string, ref } from "yup";
+import { useMutation } from "@tanstack/react-query";
+import Axios from "../../../API/Axios";
+
+const signupUser = async (data) => {
+  const response = await Axios.post("/user/signup", data);
+  return response.data;
+};
 
 const signupValidation = object({
   name: string().required("name is required"),
@@ -28,6 +35,17 @@ const signupValidation = object({
 });
 
 function Signup() {
+  const { mutate, isPending } = useMutation({
+    mutationKey: ["signup"],
+    mutationFn: signupUser,
+    onSuccess: (data) => {
+      console.log("Signup successful:", data);
+    },
+    onError: (error) => {
+      console.error("Signup failed:", error);
+    },
+  });
+
   return (
     <div>
       <Container>
@@ -46,7 +64,7 @@ function Signup() {
                 repeatpassword: "",
               }}
               onSubmit={(values) => {
-                console.log(values);
+                mutate(values);
               }}
               validationSchema={signupValidation}
             >
@@ -108,10 +126,10 @@ function Signup() {
                       i agree with terms and Condition.
                     </Text>
                   </Checkbox>
-                  <Button type="submit">Create Account</Button>
+                  <Button isLoading={isPending} type="submit">Create Account</Button>
                   <Text>
                     Already have an Account?
-                    <Link to="/Signin">
+                    <Link to="/signin">
                       <Text as="span" color="p.purple">
                         Login
                       </Text>

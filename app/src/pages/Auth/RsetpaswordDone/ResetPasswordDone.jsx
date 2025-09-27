@@ -6,11 +6,12 @@ import {
   Text,
   Button,
   VStack,
+  Box,
 } from "@chakra-ui/react";
 import { MdOutlineGppGood } from "react-icons/md";
 import { Link } from "react-router-dom";
 
-function RegisterSuccessfull() {
+function ResetPasswordDone() {
   return (
     <div>
       <Container>
@@ -19,15 +20,12 @@ function RegisterSuccessfull() {
             <VStack>
               <Icon as={MdOutlineGppGood} boxSize="48px" color="green"></Icon>
 
-              <Text textStyle="h1">Successfully Registration</Text>
-              <Text textStyle="p4">
-                Hurray! You have successfully created your account. Enter the
-                app to explore all it’s features.
-              </Text>
+              <Text textStyle="h1">Password Reset Done</Text>
+              <Text textStyle="p4">Now you can access you account.</Text>
             </VStack>
             <br></br>
             <Button>
-              <Link to="/Signin">Enter the APP</Link>
+              <Link to="/Signin">Sign In</Link>
             </Button>
           </Card>
         </Center>
@@ -35,5 +33,4 @@ function RegisterSuccessfull() {
     </div>
   );
 }
-
-export default RegisterSuccessfull;
+export default ResetPasswordDone;

@@ -8,6 +8,11 @@ import Signin from "./pages/Auth/signin/Signin";
 import EmailVerify from "./pages/Auth/RegisterEmailVerfy/EmailVerify";
 import RegisterSuccessfull from "./pages/Auth/RegisterSuccessfull/RegisterSuccessfull";
 import ForgotPassword from "./pages/Auth/ForgotPassword/ForgotPassword";
+import ForgotPasswordSend from "./pages/Auth/ForgotPasswordsend/ForgotPasswordSend";
+import ResetPassword from "./pages/Auth/ResetPassword/ResetPassword";
+import ResetPasswordDone from "./pages/Auth/RsetpaswordDone/ResetPasswordDone";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -30,23 +35,39 @@ const router = createBrowserRouter([
     element: <Signin />,
   },
   {
-    path: "/EmialVerify",
+    path: "/Register-Emial-Verify",
     element: <EmailVerify />,
   },
   {
-    path: "/RegisterSuccessfully",
+    path: "/Register-Successfully",
     element: <RegisterSuccessfull />,
   },
   {
-    path: "/ForgotPassword",
+    path: "/Forgot-Password",
     element: <ForgotPassword />,
+  },
+  {
+    path: "/Forgot-success",
+    element: <ForgotPasswordSend />,
+  },
+  {
+    path: "/Reset-Password",
+    element: <ResetPassword />,
+  },
+  {
+    path: "/Reset-success",
+    element: <ResetPasswordDone />,
   },
 ]);
 
 function App() {
+  const queryClient = new QueryClient();
   return (
     <>
-      <RouterProvider router={router} />
+      <QueryClientProvider client={queryClient}>
+        <RouterProvider router={router} />
+        <ReactQueryDevtools initialIsOpen={false} />
+      </QueryClientProvider>
     </>
   );
 }

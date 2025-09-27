@@ -10,10 +10,14 @@ import {
   Checkbox,
   Input,
   Button,
+  Box,
+  useToast,
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { object, string } from "yup";
+import { useMutation } from "@tanstack/react-query";
+import { signinUser } from "../../../API/query/userQuery";
 
 const SigninValidation = object({
   email: string().email("email is invalid").required("email is required"),
@@ -23,6 +27,14 @@ const SigninValidation = object({
 });
 
 function Signin() {
+  const toast = useToast();
+  const { mutate, isPending, error, isError } = useMutation({
+    mutationKey: ["signin"],
+    mutationFn: signinUser,
+  });
+  if (isError) {
+    return <Box>{error.message}</Box>;
+  }
   return (
     <div>
       <Container>
@@ -38,7 +50,7 @@ function Signin() {
                 password: "",
               }}
               onSubmit={(values) => {
-                console.log(values);
+                mutate(values);
               }}
               validationSchema={SigninValidation}
             >
@@ -77,16 +89,18 @@ function Signin() {
                     <Checkbox>
                       <Text textStyle="p3">Remember me</Text>
                     </Checkbox>
-                    <Link to="/ForgotPassword">
+                    <Link to="/Forgot-Password">
                       <Text as="span" color="p.purple">
                         Forgot Password?
                       </Text>
                     </Link>
                   </Flex>
 
-                  <Button type="submit">Login</Button>
+                  <Button isLoading={isPending} type="submit">
+                    Login
+                  </Button>
                   <Button variant="outline">
-                    <Link to="/Signup">Create NEW Account </Link>
+                    <Link to="/signup">Create NEW Account </Link>
                   </Button>
                 </Stack>
               </Form>
