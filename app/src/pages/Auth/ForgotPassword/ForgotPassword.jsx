@@ -9,24 +9,54 @@ import {
   Input,
   Button,
   Icon,
+  useToast,
 } from "@chakra-ui/react";
 import { FaLongArrowAltLeft } from "react-icons/fa";
-
+import { useMutation } from "@tanstack/react-query";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { object, string } from "yup";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+
+import { sendforgotMail } from "../../../API/query/userQuery";
 
 const SigninValidation = object({
   email: string().email("email is invalid").required("email is required"),
 });
 
 export default function ForgotPassword() {
+  const navigate = useNavigate();
+  const toast = useToast();
+
+  const { mutate, isPending, isSuccess, isError, error } = useMutation({
+    mutationKey: ["forgot-password"],
+    mutationFn: sendforgotMail,
+    onSuccess: (data) => {
+      console.log("Email sent successfully:", data);
+      toast({
+        title: "Forgot Sent",
+        description: "Verification email has been sent successfully!",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Email Verification Failed",
+        description: error.message,
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      });
+    },
+  });
+
   return (
     <div>
       <Container>
         <Center minH="100vh">
           <Card w="456px" borderRadius="1rem" p="6">
-            <Link to="/Signin">
+            <Link to="/signin">
               <Icon as={FaLongArrowAltLeft}></Icon>
             </Link>
             <Text textStyle="h1">Forgot Password</Text>
@@ -40,6 +70,11 @@ export default function ForgotPassword() {
               }}
               onSubmit={(values) => {
                 console.log(values);
+                mutate(values, {
+                  onSuccess: () => {
+                    navigate(`/Forgot-success`);
+                  },
+                });
               }}
               validationSchema={SigninValidation}
             >
@@ -60,7 +95,9 @@ export default function ForgotPassword() {
                     />
                   </FormControl>
 
-                  <Button type="submit">Reset Password</Button>
+                  <Button isLoading={isPending} type="submit">
+                    Reset Password
+                  </Button>
                 </Stack>
               </Form>
             </Formik>

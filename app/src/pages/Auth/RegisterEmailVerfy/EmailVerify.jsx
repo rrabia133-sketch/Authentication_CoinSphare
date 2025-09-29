@@ -10,16 +10,16 @@ import {
   Spinner,
   useToast,
 } from "@chakra-ui/react";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { BiSolidMessageSquareDetail } from "react-icons/bi";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { sendverificationMail } from "../../../API/query/userQuery";
+import { useEffect } from "react";
 
 function EmailVerify() {
   const toast = useToast();
   const navigate = useNavigate();
-  const location = useLocation();
-  const email = location.state?.email ?? "";
+  const { email } = useParams();
 
   console.log(email);
 
@@ -27,27 +27,47 @@ function EmailVerify() {
     return <Center h="100vh">Invalid email</Center>;
   }
 
-  const { isLoading, isSuccess, isError, error } = useQuery({
-    queryKey: ["Register-Email-Verify"],
-    queryFn: () => sendverificationMail({ email }),
-    enabled: !!email,
+  const { mutate, isPending, isSuccess, isError, error } = useMutation({
+    mutationKey: ["Register-Email-Verify"],
+    mutationFn: sendverificationMail,
+    onSuccess: (data) => {
+      console.log("Email sent successfully:", data);
+      toast({
+        title: "Email Sent",
+        description: "Verification email has been sent successfully!",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Email Verification Failed",
+        description: error.message,
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      });
+    },
   });
 
-  if (isError) {
-    toast({
-      title: "Email Verification Failed",
-      description: error.message,
-      status: "error",
-      duration: 9000,
-      isClosable: true,
-    });
-  }
+  // Automatically send email when component mounts
+  useEffect(() => {
+    if (email) {
+      mutate({ email });
+    }
+  }, [email]);
 
-  if (isLoading) {
+  if (isPending) {
     return (
-      <Center h="100vh">
-        <Spinner size="xl" />
-      </Center>
+      <Container>
+        <Center minH="100vh">
+          <VStack spacing="4">
+            <Spinner size="xl" color="p.purple" />
+            <Text>Sending verification email...</Text>
+          </VStack>
+        </Center>
+      </Container>
     );
   }
 
@@ -57,7 +77,11 @@ function EmailVerify() {
         {isSuccess && (
           <Card w="456px" borderRadius="1rem" p="6">
             <VStack spacing="6">
-              <Icon as={BiSolidMessageSquareDetail} boxSize="10" />
+              <Icon
+                as={BiSolidMessageSquareDetail}
+                boxSize="10"
+                color="p.purple"
+              />
               <Text textStyle="h1">Verify your email</Text>
               <Text textStyle="p2" color="black.60" textAlign="center">
                 We have sent a verification link to your email.
@@ -71,12 +95,35 @@ function EmailVerify() {
                 <Button
                   w="full"
                   variant="outline"
-                  colorScheme="blue"
                   onClick={() => {
-                    navigate("/signin");
+                    mutate({ email });
                   }}
+                  isLoading={isPending}
                 >
-                  Back to Signin
+                  Re-send Email
+                </Button>
+              </Box>
+            </VStack>
+          </Card>
+        )}
+        {isError && (
+          <Card w="456px" borderRadius="1rem" p="6">
+            <VStack spacing="6">
+              <Text textStyle="h1" color="red.500">
+                Email Send Failed
+              </Text>
+              <Text textStyle="p2" color="black.60" textAlign="center">
+                Failed to send verification email. Please try again.
+              </Text>
+              <Box w="full">
+                <Button
+                  w="full"
+                  onClick={() => {
+                    mutate({ email });
+                  }}
+                  isLoading={isPending}
+                >
+                  Try Again
                 </Button>
               </Box>
             </VStack>

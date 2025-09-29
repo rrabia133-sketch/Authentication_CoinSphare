@@ -35,11 +35,11 @@ const router = createBrowserRouter([
     element: <Signin />,
   },
   {
-    path: "/Register-Emial-Verify",
+    path: "/Register-Emial-Verify/:email",
     element: <EmailVerify />,
   },
   {
-    path: "/Register-Successfully",
+    path: "/email-verify/:token",
     element: <RegisterSuccessfull />,
   },
   {
@@ -47,7 +47,7 @@ const router = createBrowserRouter([
     element: <ForgotPassword />,
   },
   {
-    path: "/Forgot-success",
+    path: "/Forgot-success/:email",
     element: <ForgotPasswordSend />,
   },
   {

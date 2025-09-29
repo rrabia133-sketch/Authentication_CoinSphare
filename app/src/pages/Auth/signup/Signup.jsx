@@ -41,9 +41,7 @@ function Signup() {
     mutationFn: signupUser,
     onSuccess: (data) => {
       if (email != "") {
-        navigate("/Register-Emial-Verify", {
-          state: { email },
-        });
+        navigate(`/Register-Emial-Verify/${email}`);
       }
     },
     onError: (error) => {

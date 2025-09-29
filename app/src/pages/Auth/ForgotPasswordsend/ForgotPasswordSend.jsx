@@ -4,14 +4,16 @@ import {
   Container,
   Center,
   Text,
-  Button,
   VStack,
   Box,
 } from "@chakra-ui/react";
 import { MdOutlineGppGood } from "react-icons/md";
-import { Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
+//import { Link } from "react-router-dom";
 
 function ForgotPasswordSend() {
+  const param = useParams();
+  const { email } = param;
   return (
     <div>
       <Container>
@@ -25,7 +27,7 @@ function ForgotPasswordSend() {
               <Text textStyle="p4">
                 We have sent instructions on how to reset your password to
                 <Box as="b" color="p.black">
-                  jenny.wilson@gmail.com.
+                  {email}
                 </Box>
                 Please follow the instructions from the email.
               </Text>

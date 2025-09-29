@@ -38,3 +38,25 @@ export const sendverificationMail = async ({ email }) => {
     throw error.response.data;
   }
 };
+
+export const verifyEmailAddressSignup = async ({ token }) => {
+  try {
+    const response = await Axios.post(`${USER_URL}/verfiy-user-mail`, {
+      token,
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response.data;
+  }
+};
+
+export const sendforgotMail = async ({ email }) => {
+  try {
+    const response = await Axios.post(`${USER_URL}/forgot-password`, {
+      email,
+    });
+    return response.data;
+  } catch (error) {
+    throw error.response.data;
+  }
+};
