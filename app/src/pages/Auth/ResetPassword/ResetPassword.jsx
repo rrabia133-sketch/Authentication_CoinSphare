@@ -9,6 +9,8 @@ import {
   Input,
   Button,
   useToast,
+  VStack,
+  Spinner,
 } from "@chakra-ui/react";
 
 import { Formik, Form, Field, ErrorMessage } from "formik";
@@ -34,9 +36,9 @@ function ResetPassword() {
   const { token } = useParams();
 
   // Mutation for verifying forgot token and resetting password
-  const { Mutate, isLoading } = useMutation({
+  const { mutate, isLoading } = useMutation({
     MutationKey: ["verify-forgot-token"],
-    MutationFn: () => verifyForgotToken({ token, password }),
+    MutationFn: verifyForgotToken,
     enabled: !!token,
     onError: (error) => {
       toast({
@@ -46,11 +48,8 @@ function ResetPassword() {
         duration: 5000,
         isClosable: true,
       });
-
-      navigate("/signin");
     },
-
-    onSettled: () => {
+    onSuccess: () => {
       toast({
         title: "Success",
         description: "Password reset successfully",
@@ -58,7 +57,7 @@ function ResetPassword() {
         duration: 5000,
         isClosable: true,
       });
-      navigate("/signin");
+      navigate("/Reset-success");
     },
   });
 
@@ -91,6 +90,7 @@ function ResetPassword() {
               }}
               onSubmit={(values) => {
                 console.log(values);
+                mutate({ token, password: values.password });
               }}
               validationSchema={resetValidation}
             >
@@ -100,7 +100,7 @@ function ResetPassword() {
                     <FormLabel htmlFor="password"> New Password</FormLabel>
                     <Field
                       as={Input}
-                      name="new-password"
+                      name="password"
                       type="password"
                       placeholder="enter new password..."
                     />

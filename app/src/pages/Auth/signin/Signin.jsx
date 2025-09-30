@@ -12,7 +12,7 @@ import {
   Button,
   useToast,
 } from "@chakra-ui/react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { object, string } from "yup";
 import { useMutation } from "@tanstack/react-query";
@@ -38,6 +38,7 @@ function Signin() {
         duration: 9000,
         isClosable: true,
       });
+      Navigate("/dashboard");
     },
     onError: (error) => {
       toast({
