@@ -19,33 +19,33 @@ import { Link, useNavigate } from "react-router-dom";
 
 import { sendforgotMail } from "../../../API/query/userQuery";
 
-const SigninValidation = object({
-  email: string().email("email is invalid").required("email is required"),
+const ForgotPasswordValidation = object({
+  email: string().email("Email is invalid").required("Email is required"),
 });
 
 export default function ForgotPassword() {
   const navigate = useNavigate();
   const toast = useToast();
 
-  const { mutate, isPending, isSuccess, isError, error } = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationKey: ["forgot-password"],
     mutationFn: sendforgotMail,
-    onSuccess: (data) => {
-      console.log("Email sent successfully:", data);
+    onSuccess: (response, variables) => {
       toast({
-        title: "Forgot Sent",
-        description: "Verification email has been sent successfully!",
+        title: "Email Sent",
+        description: "Password reset email has been sent successfully!",
         status: "success",
         duration: 5000,
         isClosable: true,
       });
+      navigate(`/Forgot-success/${encodeURIComponent(variables.email)}`);
     },
     onError: (error) => {
       toast({
         title: "Email Verification Failed",
-        description: error.message,
+        description: error.message || "Please check your email and try again",
         status: "error",
-        duration: 9000,
+        duration: 5000,
         isClosable: true,
       });
     },
@@ -69,14 +69,9 @@ export default function ForgotPassword() {
                 email: "",
               }}
               onSubmit={(values) => {
-                console.log(values);
-                mutate(values, {
-                  onSuccess: () => {
-                    navigate(`/Forgot-success`);
-                  },
-                });
+                mutate(values);
               }}
-              validationSchema={SigninValidation}
+              validationSchema={ForgotPasswordValidation}
             >
               <Form>
                 <Stack mt="10" spacing="6">
@@ -85,7 +80,8 @@ export default function ForgotPassword() {
                     <Field
                       as={Input}
                       name="email"
-                      placeholder="enter email..."
+                      type="email"
+                      placeholder="Enter your email..."
                     />
                     <ErrorMessage
                       name="email"

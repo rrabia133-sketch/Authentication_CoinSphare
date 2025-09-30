@@ -51,7 +51,7 @@ const router = createBrowserRouter([
     element: <ForgotPasswordSend />,
   },
   {
-    path: "/Reset-Password",
+    path: "/forgot-password-verify/:token",
     element: <ResetPassword />,
   },
   {

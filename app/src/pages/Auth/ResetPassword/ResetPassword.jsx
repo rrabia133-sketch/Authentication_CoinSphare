@@ -8,11 +8,16 @@ import {
   FormLabel,
   Input,
   Button,
+  useToast,
 } from "@chakra-ui/react";
 
 import { Formik, Form, Field, ErrorMessage } from "formik";
+import { useNavigate, useParams } from "react-router-dom";
 import { object, string, ref } from "yup";
+import { verifyForgotToken } from "../../../API/query/userQuery";
+import { useMutation } from "@tanstack/react-query";
 
+//form validation schema
 const resetValidation = object({
   password: string()
     .min(6, "password must be atleast 6 charactor")
@@ -23,6 +28,53 @@ const resetValidation = object({
 });
 
 function ResetPassword() {
+  // Initialize navigate and toast
+  const navigate = useNavigate();
+  const toast = useToast();
+  const { token } = useParams();
+
+  // Mutation for verifying forgot token and resetting password
+  const { Mutate, isLoading } = useMutation({
+    MutationKey: ["verify-forgot-token"],
+    MutationFn: () => verifyForgotToken({ token, password }),
+    enabled: !!token,
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+
+      navigate("/signin");
+    },
+
+    onSettled: () => {
+      toast({
+        title: "Success",
+        description: "Password reset successfully",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
+      navigate("/signin");
+    },
+  });
+
+  if (isLoading) {
+    return (
+      <Container>
+        <Center minH="100vh">
+          <VStack spacing="4">
+            <Spinner size="xl" color="p.purple" />
+            <Text>Sending verification email...</Text>
+          </VStack>
+        </Center>
+      </Container>
+    );
+  }
+
   return (
     <div>
       <Container>
