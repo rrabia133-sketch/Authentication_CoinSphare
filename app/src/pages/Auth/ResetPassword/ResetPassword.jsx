@@ -16,7 +16,7 @@ import {
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { useNavigate, useParams } from "react-router-dom";
 import { object, string, ref } from "yup";
-import { verifyForgotToken } from "../../../API/query/userQuery";
+import { verfiyForgotToken } from "../../../API/query/userQuery";
 import { useMutation } from "@tanstack/react-query";
 
 //form validation schema
@@ -37,27 +37,20 @@ function ResetPassword() {
 
   // Mutation for verifying forgot token and resetting password
   const { mutate, isLoading } = useMutation({
-    MutationKey: ["verify-forgot-token"],
-    MutationFn: verifyForgotToken,
+    mutationKey: ["verify-forgot-token"],
+    mutationFn: verfiyForgotToken,
     enabled: !!token,
     onError: (error) => {
       toast({
-        title: "Error",
+        title: "SignUp Error",
         description: error.message,
         status: "error",
-        duration: 5000,
-        isClosable: true,
       });
+
+      navigate("/signup");
     },
-    onSuccess: () => {
-      toast({
-        title: "Success",
-        description: "Password reset successfully",
-        status: "success",
-        duration: 5000,
-        isClosable: true,
-      });
-      navigate("/Reset-success");
+    onSettled: () => {
+      navigate("/reset-success");
     },
   });
 

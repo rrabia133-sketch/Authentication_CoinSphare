@@ -12,12 +12,12 @@ import {
   Button,
   useToast,
 } from "@chakra-ui/react";
-import { Link, Navigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { object, string } from "yup";
 import { useMutation } from "@tanstack/react-query";
 import { signinUser } from "../../../API/query/userQuery";
-
+import useAuth from "../../../hook/useAuth";
 const SigninValidation = object({
   email: string().email("email is invalid").required("email is required"),
   password: string()
@@ -27,30 +27,25 @@ const SigninValidation = object({
 
 function Signin() {
   const toast = useToast();
-  const { mutate, isLoading, error, isError } = useMutation({
+  const { login } = useAuth();
+  const { mutate, isLoading } = useMutation({
     mutationKey: ["signin"],
     mutationFn: signinUser,
     onSuccess: (data) => {
-      toast({
-        title: "Signin Successfull",
-        description: "Welcome to Coin Sphare",
-        status: "success",
-        duration: 9000,
-        isClosable: true,
-      });
-      Navigate("/dashboard");
+      const { token } = data;
+
+      if (token) {
+        login(token);
+      }
     },
     onError: (error) => {
       toast({
-        title: "Signin Failed",
+        title: "Signin Error",
         description: error.message,
         status: "error",
-        duration: 9000,
-        isClosable: true,
       });
     },
   });
-
   return (
     <div>
       <Container>

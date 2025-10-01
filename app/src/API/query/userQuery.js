@@ -67,13 +67,15 @@ export const sendforgotMail = async ({ email }) => {
 };
 
 // this function is for verifying email address during forgot password
-export const verifyForgotToken = async ({ token }) => {
+
+export const verfiyForgotToken = async ({ token, password }) => {
   try {
-    const response = await Axios.post(`${USER_URL}/verfiy-user-mail`, {
+    const { data } = await Axios.post(`${USER_URL}/verify-forgot-mail`, {
       token,
+      password,
     });
-    return response.data;
+    return data;
   } catch (error) {
-    throw error.response.data;
+    throw Error(error.response.data.message);
   }
 };
