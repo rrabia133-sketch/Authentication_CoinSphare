@@ -16,7 +16,7 @@ const Dashboard = ({}) => {
   const exampleQuery = useQuery({
     queryKey: ["example"],
     queryFn: FetchExample,
-    enabled: false, // Disable auto-fetch since server might not be running
+
     retry: false, // Don't retry on failure
   });
   return (
